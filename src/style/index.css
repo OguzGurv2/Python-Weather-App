@@ -1,0 +1,396 @@
+* {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    font-family: sans-serif;
+}
+
+:root {
+    --primary-bg: #DCDCDC;
+    --secondary-bg: #FAFAFA;
+    --primary-text: #4A4A4A;
+    --secondary-text: #EAEAEA;
+    --border: #6D6D6D;
+    --button: #333333;
+}
+
+body {
+    background-color: var(--primary-bg);
+    color: #4A4A4A;
+}
+
+section {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+}
+
+footer {
+    width: 75%;
+    height: 5vh;
+    background-color: transparent;
+    z-index: 1;
+    position: absolute;
+    bottom: 0%;
+    left: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+section > aside {
+    width: 25%;
+    background-color: var(--secondary-bg);
+    border-right: 0;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5% 0%;
+    box-shadow: 5px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.input-container {
+    background-color: var(--secondary-text);
+    border-radius: 5px;
+    color: var(--primary-text);
+    padding: 2.5%;
+    display: flex;
+    gap: 5%;
+    width: 75%;
+    height: fit-content;
+}
+
+.input-container > input {
+    background-color: transparent;
+    width: auto;
+    overflow: hidden;
+}
+
+.input-container > input[type="text"]:focus {
+    border: none;
+    outline: none;
+}
+
+.input-container > input[type="text"]::placeholder {
+    color: var(--primary-text);
+}
+
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    width: 100%;
+    align-items: center;
+}
+
+.sidebar-content > div {
+    padding: 5% 0%;
+}
+
+.sidebar-content > .upper-content {
+    height: 60%;
+    width: 80%;
+    justify-content: center;
+    border-bottom: 1.5px var(--secondary-text) solid;
+}
+
+.upper-content > .img-container {
+    height: 55%;
+    padding-top: 5%;
+}
+
+.img-container > img {
+    width: 100%;
+    height: 100%;
+    object-position: center;
+    object-fit: contain;
+}
+
+.upper-content > h1 {
+    font-size: 3.5em;
+    padding-top: 5%;
+    font-weight: 500;
+}
+
+.upper-content > p {
+    font-size: 1em;
+    font-weight: 600;
+    color: var(--primary-text);
+    padding-top: 5%;
+}
+
+.upper-content > p::after {
+    content: "16:00";
+    font-weight: 500;
+    color: var(--border);
+}
+
+.sidebar-content > .lower-content {
+    height: 40%;
+    width: 80%;
+    display: block;
+    text-align: left;
+}
+
+.lower-content > .info-div {
+    width: 100%;
+    height: 1em;
+    display: inline-flex;
+    gap: 5%;
+    align-items: center;
+    margin-top: 2.5%;
+}
+
+.lower-content > .info-div > img {
+    height: fit-content;
+    width: 7.5%;
+}
+
+.lower-content > .info-div > p {
+    font-size: 1em;
+    font-weight: 600;
+    color: var(--primary-text);
+}
+
+.lower-content > .info-div > #rain-info::after {
+    content: "0%";
+}
+
+.lower-content > #location {
+    margin-top: 5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 80%;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url("../assets/sunny-stock.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 7.5px;
+}
+
+#location > h2 {
+    font-size: 1.25em;
+    font-weight: 600;
+    color: var(--secondary-bg);
+}
+
+section > main {
+    width: 75%;
+    padding: 2.5%;
+}
+
+main > header {
+    width: 90%;
+    height: fit-content;
+}
+
+main > header > ul {
+    width: 105%;
+    list-style: none;
+    display: inline-flex;
+    justify-content: right;
+}
+
+main > header > ul > li {
+    display: flex;
+    flex-direction: row;
+    gap: 25%;
+    width: fit-content;
+}
+
+main > header > ul > li > button {
+    font-size: 1.25em;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#unit-selection > button {
+    background-color: transparent;
+    color: var(--button);
+    border-radius: 50%;
+    padding: 15%;
+    transition: box-shadow 250ms ease-in-out;
+    transition: transform 250ms ease-in-out;
+}
+
+#unit-selection > button:not(.active):hover {
+    box-shadow: 2px 2px 5px var(--border);
+    transform: translateY(-1px);
+}
+
+#unit-selection > button.active {
+    background-color: var(--button);
+    color: var(--primary-bg);
+}
+
+#weekly-weather {
+    margin-top: 2.5%;
+    height: 22.5vh;
+    width: 100%;
+    display: inline-flex;
+    justify-content: space-between;
+}
+
+#weekly-weather > div {
+    height: 100%;
+    width: 110px;
+    background-color: var(--secondary-bg);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    border-radius: 5%;
+    box-shadow: 2px 1px 5px var(--border);
+}
+
+#weekly-weather > div > h3 {
+    font-size: 1em;
+}
+
+#weekly-weather > div > .img-container {
+    height: 50%;
+}
+
+#weekly-weather > div > .wrapper {
+    display: inline-flex;
+    gap: 5%;
+}
+
+#weekly-weather > div > .wrapper > p {
+    font-size: 0.75em;
+    font-weight: 600;
+}
+
+#weekly-weather > div > .wrapper > #night-temp{
+    color: var(--border);
+    opacity: 0.5;
+}
+
+.highlights-container {
+    margin-top: 2.5%;
+    width: 100%;
+
+}
+
+.highlights-container > div {
+    margin-top: 1%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    height: 100%;
+    gap: 5% 2.5%;
+}
+
+#highlights > div {
+    width: 95%;
+    height: 125px;
+    background-color: var(--secondary-text);
+    border-radius: 2.5%;
+    box-shadow: 1px 1px 5px var(--border);
+    padding: 2.5% 5%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5%;
+    position: relative;
+}
+
+#highlights > div > h3 {
+    color: var(--border);
+    opacity: 0.5;
+    align-self: flex-start;
+}
+
+#highlights > div > progress {
+    margin-top: 10%;
+    width: 80%;
+    border-radius: 10px;
+}
+
+#highlights > div > progress::-webkit-progress-value {
+    background-color: #FABC3F;
+    border-radius: 10px;
+}
+
+#highlights > div > progress::-webkit-progress-bar {
+    border-radius: 10px;
+    background-color: var(--primary-bg);
+}
+
+#highlights > div > progress::after {
+    content: attr(value);
+    position: absolute;
+    left: calc((5 / 11) * 90%); 
+    font-size: 16px;
+    color: var(--button);
+    font-weight: 600;
+}
+
+.uv-index-container > p {
+    position: absolute;
+    bottom: 10%;
+}
+
+.label {
+    position: absolute;
+    bottom: 75px;
+    font-size: 14px;
+    color: var(--button);
+    opacity: 0.5;
+}
+.label[data-label="0"] { left: 10%; }
+.label[data-label="3"] { left: 28.75%; }
+.label[data-label="6"] { left: 47.5%; }
+.label[data-label="9"] { left: 66.25%; }
+.label[data-label="12"] { left: 85%; }
+
+#highlights > div > h2 {
+    margin-top: 10px;
+    font-size: 2.5em;
+    color: var(--button);
+}
+
+#wind-status > p {
+    width: fit-content;
+    position: absolute;
+    bottom: 5%;
+    left: 5%;
+}
+
+#sunrise-sunset > div {
+    display: inline-flex;
+    width: 90%;
+    align-items: center;
+    gap: 5%;
+    padding: 0% 5%;
+    margin-top: 5%;
+}
+
+#sunrise-sunset > div > img{
+    height: fit-content;
+    width: 12.5%;
+}
+
+#sunrise-sunset > div > p {
+    font-weight: 600;
+    font-size: 1em;
+    color: var(--button);
+}
+
+#humidity > h2, #humidity > p, 
+#visibility > h2, #visibility > p,
+#air-quality > h2, #air-quality > p {
+    align-self: start;
+    color: var(--button);
+}
+
+footer > p {
+    font-size: 10px;
+    padding-top: 7.5px;
+}
+
+.unit::after {
+    content: attr(data-after);
+}
