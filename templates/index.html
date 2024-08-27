@@ -19,8 +19,8 @@
                     <div class="img-container">
                         <img src="{{ url_for('static', filename='assets/sunny-icon.png') }}" alt="sidebar-image">
                     </div>
-                    <h1 id="temp" class="unit">30</h1>
-                    <p id="day">Monday, </p>
+                    <h1 id="temp" class="unit"></h1>
+                    <p id="day"></p>
                 </div>
                 <div class="lower-content">
                     <div class="info-div">
@@ -32,7 +32,7 @@
                         <p id="rain-info">Rain - </p>
                     </div>
                     <div id="location">
-                        <h2>Ankara, Turkey</h2>
+                        <h2></h2>
                     </div>
                 </div>
             </div>
@@ -65,47 +65,47 @@
                 <div id="highlights">
                     <div class="uv-index-container">
                         <h3>UV-Index</h3>
-                        <progress id="uv-index" max="12" value="5"></progress>
+                        <progress id="uv-index" max="12" value="0"></progress>
                         <div class="label" data-label="0">0</div>
                         <div class="label" data-label="3">3</div>
                         <div class="label" data-label="6">6</div>
                         <div class="label" data-label="9">9</div>
                         <div class="label" data-label="12">12</div>
-                        <p>Moderate</p>
+                        <p></p>
                     </div>
                     <div id="wind-status">
                         <h3>Wind Status</h3>
-                        <h2 id="wind-speed">7.70km/h</h2>
+                        <h2 id="wind-speed"></h2>
                         <div class="wrapper">
                             <i class="fa-solid fa-compass"></i>
-                            <p id="wind-direction">WSW</p>
+                            <p id="wind-direction"></p>
                         </div>
                     </div>
                     <div id="sunrise-sunset">
                         <h3>Sunrise & Sunset</h3>
                         <div>
                             <img src="{{ url_for('static', filename='assets/sunny-icon.png') }}" alt="sunrise">
-                            <p id="sunrise">6.35 AM</p>
+                            <p id="sunrise"></p>
                         </div>
                         <div>
                             <img src="{{ url_for('static', filename='assets/clear-night-icon.png') }}" alt="sunset">
-                            <p id="sunset">8.42 PM</p>
+                            <p id="sunset"></p>
                         </div>
                     </div>
                     <div id="humidity">
                         <h3>Humidity</h3>
-                        <h2 id="humidity-percentage">12%</h2>
-                        <p id="humidity-info">Normal</p>
+                        <h2 id="humidity-percentage"></h2>
+                        <p id="humidity-info"></p>
                     </div>
                     <div id="visibility">
                         <h3>Visibility</h3>
-                        <h2 id="visibility-percentage">5.2km</h2>
-                        <p id="visibility-percentage">Average</p>
+                        <h2 id="visibility-distance"></h2>
+                        <p id="visibility-info"></p>
                     </div>
                     <div id="air-quality">
                         <h3>Air Quality</h3>
-                        <h2 id="air-quality-percentage">105</h2>
-                        <p id="air-quality-percentage">Unhealthy</p>
+                        <h2 id="air-quality-unit"></h2>
+                        <p id="air-quality-info"></p>
                     </div>
                 </div>
             </div>

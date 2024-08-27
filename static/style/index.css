@@ -120,8 +120,8 @@ section > aside {
     padding-top: 5%;
 }
 
-.upper-content > p::after {
-    content: "16:00";
+#day::after {
+    content: attr(data-after);
     font-weight: 500;
     color: var(--border);
 }
@@ -154,7 +154,7 @@ section > aside {
 }
 
 .lower-content > .info-div > #rain-info::after {
-    content: "0%";
+    content: attr(data-after);
 }
 
 .lower-content > #location {
@@ -322,8 +322,9 @@ main > header > ul > li > button {
 #highlights > div > progress::after {
     content: attr(value);
     position: absolute;
-    left: calc((5 / 11) * 90%); 
-    font-size: 16px;
+    left: 47.5%; 
+    top: 60%;
+    font-size: 18px;
     color: var(--button);
     font-weight: 600;
 }
@@ -357,6 +358,11 @@ main > header > ul > li > button {
     position: absolute;
     bottom: 5%;
     left: 5%;
+}
+
+#wind-status > .wrapper {
+    display: inline-flex;
+    gap: 10%;
 }
 
 #sunrise-sunset > div {
