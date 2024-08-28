@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    let units;
 
     const getUserLocation = () => {
         return new Promise((resolve, reject) => {
@@ -34,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const airQualityResponse = await fetch(`air-quality?lat=${lat}&lon=${lon}`);
             const airQualityData = await airQualityResponse.json();
 
-            new DayWeather(weatherData, locationData, airQualityData);
+            new Highlights(weatherData, locationData, airQualityData);
 
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -42,14 +43,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    startWebpage();
+    startWebpage().then(()=>{
+        units = document.querySelectorAll(".unit");
+        units.forEach((unit) => {
+            unit.setAttribute("data-after", "°C")
+        });
+    });
 
-    class DayWeather {
+    class Highlights {
         constructor(weatherData, locationData, airQualityData) {
             this.weatherData = weatherData;
             this.locationData = locationData;
             this.airQualityData = airQualityData;
-            console.log(airQualityData)
 
             this.sidebarContent = document.querySelector(".sidebar-content");
             this.temp = this.sidebarContent.querySelector("#temp");
@@ -71,16 +76,17 @@ document.addEventListener("DOMContentLoaded", () => {
             this.visibilityInfo = this.mainContent.querySelector("#visibility-info");
             this.airQualityUnit = this.mainContent.querySelector("#air-quality-unit");
             this.airQualityInfo = this.mainContent.querySelector("#air-quality-info");
+            this.dayAndTime = this.getDayAndTime(this.weatherData.current.dt);
             
             this.appendSidebarData();
             this.appendMainData();
+            this.createDailyInfo();
         }
         
         appendSidebarData() {
             this.temp.textContent = Math.floor(this.weatherData.current.temp);
-            const dayAndTime = this.getDayAndTime(this.weatherData.current.dt);
-            this.day.textContent = `${dayAndTime.day}, `;
-            this.day.setAttribute("data-after", dayAndTime.formattedTime);
+            this.day.textContent = `${this.dayAndTime.day}, `;
+            this.day.setAttribute("data-after", this.dayAndTime.formattedTime);
             this.generalInfo.textContent = this.capitalizeFirstLetter(this.weatherData.current.weather[0].description);
             this.location.textContent = this.locationData.name;
             
@@ -91,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
             
         appendMainData() {
-            this.uvIndex.value = this.weatherData.current.uvi;
+            this.uvIndex.value = Math.floor(this.weatherData.current.uvi);
             this.uvIndexInfo.textContent = this.getUvInfo(this.weatherData.current.uvi);
             this.windSpeed.textContent = `${this.weatherData.current.wind_speed}km/h`;
             this.windDirection.textContent = this.getWindDirection(this.weatherData.current.wind_deg);
@@ -103,6 +109,12 @@ document.addEventListener("DOMContentLoaded", () => {
             this.visibilityInfo.textContent = `${this.getVisibilityInfo(this.weatherData.current.visibility)}`;
             this.airQualityUnit.textContent = this.airQualityData.list[0].main.aqi;
             this.airQualityInfo.textContent = `${this.getAirQualityInfo(this.airQualityData.list[0].main.aqi)}`;
+        }
+
+        createDailyInfo() {
+            for (let i = 0; i < 7; i++) {
+                new DailyInfo(this.weatherData.daily[i]);
+            }
         }
             
         getDayAndTime(timestamp) {  
@@ -116,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
             let minutes = date.getMinutes();
 
             // Format hours and minutes (e.g., 12.50)
-            let formattedTime = `${hours}.${minutes < 10 ? '0' + minutes : minutes}`;
+            let formattedTime = `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
             return {day, formattedTime};
         }
 
@@ -221,15 +233,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
         
-    class WeekWeather {
-        constructor () {
+    class DailyInfo {
+        constructor (dayData) {
+            this.dayData = dayData;
             this.template = document.querySelector("#day-template");
+
+            const clone = this.template.content.cloneNode(true);
+            this.node = clone.querySelector("#day-container");
+            document.querySelector("#weekly-weather").append(this.node);
+
+            this.header = this.node.querySelector("h3");
+            this.maxTemp = this.node.querySelector("#max-temp");
+            this.minTemp = this.node.querySelector("#min-temp");
+            this.day = this.getDay(this.dayData.dt);
+
+            this.appendData();
         }
+
+        appendData() {
+            this.header.textContent = this.day;
+            this.maxTemp.textContent = Math.floor(this.dayData.temp.max);
+            this.minTemp.textContent = Math.floor(this.dayData.temp.min);
+        }
+             
+        getDay(timestamp) {  
+            let date = new Date(timestamp * 1000);
+            let today = new Date(); // Get the current date
+            
+            // Get day of the week
+            let daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            
+            // Check if the date is today
+            let isToday = date.getDate() === today.getDate() &&
+                          date.getMonth() === today.getMonth() &&
+                          date.getFullYear() === today.getFullYear();
+            
+            let day = isToday ? "Today" : daysOfWeek[date.getDay()];  // Use "Today" if it's today
+            
+            return day;
+        }
+        
     }
     
-    const weekWeather = new WeekWeather();
-
-    const units = document.querySelectorAll(".unit");
     const unitSelection = document.querySelector("#unit-selection");
     
     // Function to update units and data attribute
@@ -239,11 +284,6 @@ document.addEventListener("DOMContentLoaded", () => {
             unit.textContent = conversionFunc(parseInt(unit.textContent));
         });
     };
-
-    // Initial setup for Celsius
-    units.forEach((unit) => {
-        unit.setAttribute("data-after", "°C")
-    });
 
     // Handle button clicks
     unitSelection.querySelectorAll("button").forEach((button) => {
@@ -257,8 +297,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Update units based on selected button
                 updateUnits(isCelsius ? "°C" : "°F", isCelsius 
-                    ? (temp) => (temp - 32) * 5 / 9 
-                    : (temp) => temp * 9 / 5 + 32
+                    ? (temp) => Math.round((temp - 32) * 5 / 9)
+                    : (temp) => Math.round(temp * 9 / 5 + 32)
                 );
             }
         });

@@ -48,14 +48,14 @@
             </header>
             <div id="weekly-weather">
                 <template id="day-template">
-                    <div>
-                        <h3>Today</h3>
+                    <div id="day-container">
+                        <h3></h3>
                         <div class="img-container">
                             <img src="{{ url_for('static', filename='assets/sunny-icon.png') }}" alt="weekly-weather-image">
                         </div>
                         <div class="wrapper">
-                            <p id="day-temp" class="unit">30</p>
-                            <p id="night-temp" class="unit">15</p>
+                            <p id="max-temp" class="unit"></p>
+                            <p id="min-temp" class="unit"></p>
                         </div>
                     </div>
                 </template>

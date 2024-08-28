@@ -256,7 +256,7 @@ main > header > ul > li > button {
 
 #weekly-weather > div > .wrapper {
     display: inline-flex;
-    gap: 5%;
+    justify-content: space-evenly;
 }
 
 #weekly-weather > div > .wrapper > p {
@@ -264,7 +264,7 @@ main > header > ul > li > button {
     font-weight: 600;
 }
 
-#weekly-weather > div > .wrapper > #night-temp{
+#min-temp{
     color: var(--border);
     opacity: 0.5;
 }
@@ -353,16 +353,10 @@ main > header > ul > li > button {
     color: var(--button);
 }
 
-#wind-status > p {
-    width: fit-content;
-    position: absolute;
-    bottom: 5%;
-    left: 5%;
-}
-
 #wind-status > .wrapper {
     display: inline-flex;
     gap: 10%;
+    align-self: start;
 }
 
 #sunrise-sunset > div {

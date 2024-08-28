@@ -49,7 +49,7 @@ def get_weather_data():
     lat = request.args.get('lat')
     lon = request.args.get('lon')
     if lat and lon:
-        url = f'https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&appid={API_KEY}&exclude=hourly,daily,minutely&units=metric'
+        url = f'https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&appid={API_KEY}&exclude=hourly,minutely&units=metric'
         response = requests.get(url)
         return jsonify(response.json())
     else:
