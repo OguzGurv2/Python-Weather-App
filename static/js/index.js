@@ -62,6 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
             this.generalInfo = this.sidebarContent.querySelector("#general-info");
             this.rainInfo = this.sidebarContent.querySelector("#rain-info");
             this.location = this.sidebarContent.querySelector("#location").querySelector("h2");
+            this.imgContainer = this.sidebarContent.querySelector(".img-container");
+            this.sidebarImg = this.sidebarContent.querySelector("img");
 
             this.mainContent = document.querySelector(".highlights-container");
             this.uvIndex = this.mainContent.querySelector("progress");
@@ -76,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
             this.visibilityInfo = this.mainContent.querySelector("#visibility-info");
             this.airQualityUnit = this.mainContent.querySelector("#air-quality-unit");
             this.airQualityInfo = this.mainContent.querySelector("#air-quality-info");
-            this.dayAndTime = this.getDayAndTime(this.weatherData.current.dt);
+            this.dayAndTime = this.getDayAndTime();
             
             this.appendSidebarData();
             this.appendMainData();
@@ -93,7 +95,12 @@ document.addEventListener("DOMContentLoaded", () => {
             this.rainInfo.setAttribute(
                 "data-after", 
                 this.weatherData.current.rain ? `${this.weatherData.current.rain['1h'] * 100}%` : `0%`
-                );            
+                );
+                
+            this.sidebarImg.src = `${this.imgContainer.getAttribute('data-icon-url')}${
+                this.findIcon(this.weatherData.current.weather[0].description, 
+                this.weatherData.current.sunrise, 
+                this.weatherData.current.sunset)}.png`;
         }
             
         appendMainData() {
@@ -101,8 +108,8 @@ document.addEventListener("DOMContentLoaded", () => {
             this.uvIndexInfo.textContent = this.getUvInfo(this.weatherData.current.uvi);
             this.windSpeed.textContent = `${this.weatherData.current.wind_speed}km/h`;
             this.windDirection.textContent = this.getWindDirection(this.weatherData.current.wind_deg);
-            this.sunrise.textContent = `${this.getDayAndTime(this.weatherData.current.sunrise).formattedTime}`;
-            this.sunset.textContent = `${this.getDayAndTime(this.weatherData.current.sunset).formattedTime}`;
+            this.sunrise.textContent = `${this.getTime(this.weatherData.current.sunrise)}`;
+            this.sunset.textContent = `${this.getTime(this.weatherData.current.sunset)}`;
             this.humidityPercentage.textContent = `${this.weatherData.current.humidity}%`;
             this.humidityInfo.textContent = this.getHumidityInfo(this.weatherData.current.humidity);
             this.visibilityDistance.textContent = `${this.weatherData.current.visibility / 1000}km`;
@@ -117,19 +124,31 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
             
-        getDayAndTime(timestamp) {  
-            let date = new Date(timestamp * 1000);
+        getDayAndTime() {  
+            let date = new Date(Date.now());  // Convert timestamp to Date object
             // Get day of the week
             let daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             let day = daysOfWeek[date.getDay()];
-
+            
             // Get hours and minutes
             let hours = date.getHours();
             let minutes = date.getMinutes();
-
-            // Format hours and minutes (e.g., 12.50)
+            
+            // Format hours and minutes (e.g., 12:50)
             let formattedTime = `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
-            return {day, formattedTime};
+            return {day, formattedTime};            
+        }
+
+        getTime(timestamp) {
+            let date = new Date(timestamp * 1000);  // Convert timestamp to Date object
+            
+            // Get hours and minutes
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            
+            // Format hours and minutes (e.g., 12:50)
+            let formattedTime = `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+            return formattedTime;  
         }
 
         capitalizeFirstLetter (str) {
@@ -216,18 +235,77 @@ document.addEventListener("DOMContentLoaded", () => {
         }  
         
         getAirQualityInfo(aqi) {
-            if (aqi === 1) {
-                return "Good";
-            } else if (aqi === 2) {
-                return "Fair";
-            } else if (aqi === 3) {
-                return "Moderate";
-            } else if (aqi === 4) {
-                return "Poor";
-            } else if (aqi === 5) {
-                return "Very Poor";
-            } else {
-                return "Data not available.";
+            switch (aqi) {
+                case 1:
+                    return "Good";
+                case 2:
+                    return "Fair";
+                case 3:
+                    return "Moderate";
+                case 4:
+                    return "Poor";
+                case 5:
+                    return "Very Poor";
+                default:
+                    return "Data not available.";
+            }
+        }
+
+        findIcon(description, sunrise, sunset, time) {
+            let date = Date.now();
+
+            const isNight = 
+                sunrise * 1000 < time < sunset * 1000 ? false : true;
+
+            console.log(isNight)
+
+            switch (description) {
+                case "clear sky":
+                    if (isNight) {
+                       return "clear-night-icon" 
+                    }
+                    return "sunny-icon";
+                case "few clouds" || "scattered Clouds":
+                    if (isNight) {
+                        return "partly-cloudy-night-icon" 
+                     }
+                    return "partly-cloudy-icon";
+                case "broken clouds":
+                    return "few-clouds-icon";
+                case "overcast clouds":
+                    return "cloudy-icon";
+                case "light rain" || "moderate rain":
+                    if (isNight) {
+                        return "light-rain-icon";
+                    }
+                    return "sunny-light-rain-icon";
+                case "heavy intensity rain" || "very heavy rain" || 
+                "extreme rain" || "light intensity shower rain" || 
+                "shower rain" || "heavy intensity shower rain" || "ragged shower rain":
+                    return "heavy-rain-icon"; 
+                case "freezing rain" || "sleet" || "light shower sleet" || 
+                "shower sleet" || "light rain and snow" || "rain and snow":
+                    return "snow-rain-icon";
+                case "freezing rain":
+                    return "snow-rain-icon";
+                case "drizzle" || "drizzle rain" || 
+                "heavy intensity drizzle" || "light intensity drizzle" || 
+                "shower rain and drizzle" || "heavy intensity drizzle rain" || "shower drizzle":
+                    return "sunny-light-rain-icon";
+                case "thunderstorm with light rain" || "thunderstorm with rain" || 
+                "thunderstorm with heavy rain" || "thunderstorm with light drizzle" || 
+                "thunderstorm with drizzle" || "thunderstorm with heavy drizzle":
+                    return "thunderstorm-rain-icon";
+                case "thunderstorm" || "heavy thunderstorm" || 
+                "ragged thunderstorm":
+                    return "thunderstorm-icon";
+                case "light snow" || "snow" || "light shower snow" || 
+                "shower snow" || "heavy shower snow":
+                    return "snow-icon";
+                case "heavy snow":
+                    return "heavy-snow-icon";
+                default:
+                    return "Data not available.";
             }
         }
 

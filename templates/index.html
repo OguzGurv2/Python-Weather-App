@@ -16,19 +16,19 @@
             </div>
             <div class="sidebar-content">
                 <div class="upper-content">
-                    <div class="img-container">
-                        <img src="{{ url_for('static', filename='assets/sunny-icon.png') }}" alt="sidebar-image">
+                    <div class="img-container" data-icon-url="{{ url_for('static', filename='assets/icons/') }}">
+                        <img src="" alt="sidebar-image">
                     </div>
                     <h1 id="temp" class="unit"></h1>
                     <p id="day"></p>
                 </div>
                 <div class="lower-content">
                     <div class="info-div">
-                        <img src="{{ url_for('static', filename='assets/hot-icon.png') }}" alt="info-image">
-                        <p id="general-info">Very Hot</p>
+                        <i class="fa-solid fa-temperature-three-quarters"></i>
+                        <p id="general-info"></p>
                     </div>
                     <div class="info-div">
-                        <img src="{{ url_for('static', filename='assets/rain-icon.png') }}" alt="info-image">
+                        <i class="fa-solid fa-umbrella"></i>
                         <p id="rain-info">Rain - </p>
                     </div>
                     <div id="location">
@@ -51,7 +51,7 @@
                     <div id="day-container">
                         <h3></h3>
                         <div class="img-container">
-                            <img src="{{ url_for('static', filename='assets/sunny-icon.png') }}" alt="weekly-weather-image">
+                            <img src="{{ url_for('static', filename='assets/icons/sunny-icon.png') }}" alt="weekly-weather-image">
                         </div>
                         <div class="wrapper">
                             <p id="max-temp" class="unit"></p>
@@ -83,13 +83,15 @@
                     </div>
                     <div id="sunrise-sunset">
                         <h3>Sunrise & Sunset</h3>
-                        <div>
-                            <img src="{{ url_for('static', filename='assets/sunny-icon.png') }}" alt="sunrise">
-                            <p id="sunrise"></p>
-                        </div>
-                        <div>
-                            <img src="{{ url_for('static', filename='assets/clear-night-icon.png') }}" alt="sunset">
-                            <p id="sunset"></p>
+                        <div class="wrapper">
+                            <div>
+                                <img src="{{ url_for('static', filename='assets/icons/sunrise-icon.png') }}" alt="sunrise">
+                                <p id="sunrise"></p>
+                            </div>
+                            <div>
+                                <img src="{{ url_for('static', filename='assets/icons/sunset-icon.png') }}" alt="sunset">
+                                <p id="sunset"></p>
+                            </div>
                         </div>
                     </div>
                     <div id="humidity">

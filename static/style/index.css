@@ -353,27 +353,31 @@ main > header > ul > li > button {
     color: var(--button);
 }
 
-#wind-status > .wrapper {
+#wind-status > .wrapper,
+#sunrise-sunset > .wrapper  {
     display: inline-flex;
     gap: 10%;
     align-self: start;
 }
 
-#sunrise-sunset > div {
+#sunrise-sunset > .wrapper  {
+    gap: 0%;
+}
+
+#sunrise-sunset > .wrapper > div {
     display: inline-flex;
     width: 90%;
     align-items: center;
-    gap: 5%;
-    padding: 0% 5%;
+    gap: 2.5%;
     margin-top: 5%;
 }
 
-#sunrise-sunset > div > img{
+#sunrise-sunset > .wrapper > div > img{
     height: fit-content;
-    width: 12.5%;
+    width: 30%;
 }
 
-#sunrise-sunset > div > p {
+#sunrise-sunset > .wrapper > div > p {
     font-weight: 600;
     font-size: 1em;
     color: var(--button);
