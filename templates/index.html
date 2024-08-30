@@ -13,6 +13,7 @@
             <div class="input-container">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input id="location-input" type="text" placeholder="Search for places...">
+                <div id="location-suggestions"></div>
             </div>
             <div class="sidebar-content">
                 <div class="upper-content">
@@ -46,20 +47,7 @@
                     </li>
                 </ul>
             </header>
-            <div id="weekly-weather">
-                <template id="day-template">
-                    <div id="day-container">
-                        <h3></h3>
-                        <div class="img-container">
-                            <img src="{{ url_for('static', filename='assets/icons/sunny-icon.png') }}" alt="weekly-weather-image">
-                        </div>
-                        <div class="wrapper">
-                            <p id="max-temp" class="unit"></p>
-                            <p id="min-temp" class="unit"></p>
-                        </div>
-                    </div>
-                </template>
-            </div>
+            <div id="weekly-weather"></div>
             <div class="highlights-container">
                 <h2>Today's highlights</h2>
                 <div id="highlights">
@@ -85,11 +73,11 @@
                         <h3>Sunrise & Sunset</h3>
                         <div class="wrapper">
                             <div>
-                                <img src="{{ url_for('static', filename='assets/icons/sunrise-icon.png') }}" alt="sunrise">
+                                <img src="{{ url_for('static', filename='assets/icons/sunrise.png') }}" alt="sunrise">
                                 <p id="sunrise"></p>
                             </div>
                             <div>
-                                <img src="{{ url_for('static', filename='assets/icons/sunset-icon.png') }}" alt="sunset">
+                                <img src="{{ url_for('static', filename='assets/icons/sunset.png') }}" alt="sunset">
                                 <p id="sunset"></p>
                             </div>
                         </div>
@@ -117,5 +105,17 @@
         <p>All rights reserved Oguz Gur (c) 2024</p>
     </footer>
 </body>
+<template id="day-template">
+    <div id="day-container">
+        <h3></h3>
+        <div class="img-container" data-icon-url="{{ url_for('static', filename='assets/icons/') }}">
+            <img src="" alt="weekly-weather-image">
+        </div>
+        <div class="wrapper">
+            <p id="max-temp" class="unit"></p>
+            <p id="min-temp" class="unit"></p>
+        </div>
+    </div>
+</template>
 <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </html>

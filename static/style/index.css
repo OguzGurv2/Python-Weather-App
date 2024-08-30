@@ -59,6 +59,7 @@ section > aside {
     gap: 5%;
     width: 75%;
     height: fit-content;
+    position: relative;
 }
 
 .input-container > input {
@@ -74,6 +75,28 @@ section > aside {
 
 .input-container > input[type="text"]::placeholder {
     color: var(--primary-text);
+}
+
+.input-container > div {
+    position: absolute;
+    background-color: var(--primary-bg);
+    top: 100%;
+    width: 90%;
+    left: 0%;
+    border-radius: 5px;
+    padding: 2.5% 5%;
+    display: none;
+}
+
+.suggestion-item {
+    cursor: pointer;
+    color: var(--primary-text);
+    padding: 2.5% 0%;
+    border-bottom: var(--border) 1px solid;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
 }
 
 .sidebar-content {
@@ -164,7 +187,6 @@ section > aside {
     justify-content: center;
     width: 100%;
     height: 80%;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url("../assets/sunny-stock.jpeg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

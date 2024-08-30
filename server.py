@@ -9,16 +9,18 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
-@app.route('/lat-lon-data', methods=['GET'])
-def get_lat_lon_data():
-    city = request.args.get('city') 
-    url = f'http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=5&appid={API_KEY}'
-    response = requests.get(url)
-    lat_lon_data = response.json()
-    if lat_lon_data:
-        return jsonify(lat_lon_data[0])  
+@app.route('/search-city', methods=['GET'])
+def search_city():
+    city = request.args.get('city')
+    if city:
+        url = f'http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=5&appid={API_KEY}'
+        response = requests.get(url)
+        if response.status_code == 200:
+            return jsonify(response.json())
+        else:
+            return jsonify({'error': 'City not found'}), 404
     else:
-        return jsonify({"error": "City not found"}), 404
+        return jsonify({'error': 'No city provided'}), 400
     
 @app.route('/city-data', methods=['GET'])
 def get_city_data():

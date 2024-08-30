@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     let units;
+    let highlightsInstance;
 
     const getUserLocation = () => {
         return new Promise((resolve, reject) => {
@@ -35,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const airQualityResponse = await fetch(`air-quality?lat=${lat}&lon=${lon}`);
             const airQualityData = await airQualityResponse.json();
 
-            new Highlights(weatherData, locationData, airQualityData);
+            highlightsInstance = new Highlights(weatherData, locationData, airQualityData);
 
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -61,9 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
             this.day = this.sidebarContent.querySelector("#day");
             this.generalInfo = this.sidebarContent.querySelector("#general-info");
             this.rainInfo = this.sidebarContent.querySelector("#rain-info");
-            this.location = this.sidebarContent.querySelector("#location").querySelector("h2");
+            this.locationContainer = this.sidebarContent.querySelector("#location");
+            this.location = this.locationContainer.querySelector("h2");
             this.imgContainer = this.sidebarContent.querySelector(".img-container");
-            this.sidebarImg = this.sidebarContent.querySelector("img");
+            this.sidebarIcon = this.sidebarContent.querySelector("img");
 
             this.mainContent = document.querySelector(".highlights-container");
             this.uvIndex = this.mainContent.querySelector("progress");
@@ -78,8 +80,15 @@ document.addEventListener("DOMContentLoaded", () => {
             this.visibilityInfo = this.mainContent.querySelector("#visibility-info");
             this.airQualityUnit = this.mainContent.querySelector("#air-quality-unit");
             this.airQualityInfo = this.mainContent.querySelector("#air-quality-info");
-            this.dayAndTime = this.getDayAndTime();
             
+            this.dayAndTime = this.getDayAndTime();
+            this.imgUrl = findImgUrl(this.weatherData.current.weather[0].description, 
+                this.weatherData.current.sunrise, this.weatherData.current.sunset);
+
+            this.updateData();
+        }
+
+        updateData() {
             this.appendSidebarData();
             this.appendMainData();
             this.createDailyInfo();
@@ -97,10 +106,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 this.weatherData.current.rain ? `${this.weatherData.current.rain['1h'] * 100}%` : `0%`
                 );
                 
-            this.sidebarImg.src = `${this.imgContainer.getAttribute('data-icon-url')}${
-                this.findIcon(this.weatherData.current.weather[0].description, 
-                this.weatherData.current.sunrise, 
-                this.weatherData.current.sunset)}.png`;
+            this.sidebarIcon.src = `${this.imgContainer.getAttribute('data-icon-url')}${this.imgUrl}.png`;
+            this.locationContainer.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url("/static/assets/stock-photos/${this.imgUrl}.jpeg")`;
         }
             
         appendMainData() {
@@ -119,6 +126,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         createDailyInfo() {
+            debugger;
+            const weeklyWeatherContainer = document.querySelector("#weekly-weather");
+            weeklyWeatherContainer.innerHTML = '';  // Remove all child elements
+        
+            // Create new DailyInfo instances
             for (let i = 0; i < 7; i++) {
                 new DailyInfo(this.weatherData.daily[i]);
             }
@@ -250,65 +262,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     return "Data not available.";
             }
         }
-
-        findIcon(description, sunrise, sunset, time) {
-            let date = Date.now();
-
-            const isNight = 
-                sunrise * 1000 < time < sunset * 1000 ? false : true;
-
-            console.log(isNight)
-
-            switch (description) {
-                case "clear sky":
-                    if (isNight) {
-                       return "clear-night-icon" 
-                    }
-                    return "sunny-icon";
-                case "few clouds" || "scattered Clouds":
-                    if (isNight) {
-                        return "partly-cloudy-night-icon" 
-                     }
-                    return "partly-cloudy-icon";
-                case "broken clouds":
-                    return "few-clouds-icon";
-                case "overcast clouds":
-                    return "cloudy-icon";
-                case "light rain" || "moderate rain":
-                    if (isNight) {
-                        return "light-rain-icon";
-                    }
-                    return "sunny-light-rain-icon";
-                case "heavy intensity rain" || "very heavy rain" || 
-                "extreme rain" || "light intensity shower rain" || 
-                "shower rain" || "heavy intensity shower rain" || "ragged shower rain":
-                    return "heavy-rain-icon"; 
-                case "freezing rain" || "sleet" || "light shower sleet" || 
-                "shower sleet" || "light rain and snow" || "rain and snow":
-                    return "snow-rain-icon";
-                case "freezing rain":
-                    return "snow-rain-icon";
-                case "drizzle" || "drizzle rain" || 
-                "heavy intensity drizzle" || "light intensity drizzle" || 
-                "shower rain and drizzle" || "heavy intensity drizzle rain" || "shower drizzle":
-                    return "sunny-light-rain-icon";
-                case "thunderstorm with light rain" || "thunderstorm with rain" || 
-                "thunderstorm with heavy rain" || "thunderstorm with light drizzle" || 
-                "thunderstorm with drizzle" || "thunderstorm with heavy drizzle":
-                    return "thunderstorm-rain-icon";
-                case "thunderstorm" || "heavy thunderstorm" || 
-                "ragged thunderstorm":
-                    return "thunderstorm-icon";
-                case "light snow" || "snow" || "light shower snow" || 
-                "shower snow" || "heavy shower snow":
-                    return "snow-icon";
-                case "heavy snow":
-                    return "heavy-snow-icon";
-                default:
-                    return "Data not available.";
-            }
-        }
-
     }
         
     class DailyInfo {
@@ -323,7 +276,11 @@ document.addEventListener("DOMContentLoaded", () => {
             this.header = this.node.querySelector("h3");
             this.maxTemp = this.node.querySelector("#max-temp");
             this.minTemp = this.node.querySelector("#min-temp");
+            this.imgContainer = this.node.querySelector(".img-container");
+            this.img = this.node.querySelector("img");
+
             this.day = this.getDay(this.dayData.dt);
+            this.imgUrl = findImgUrl(this.dayData.weather[0].description);
 
             this.appendData();
         }
@@ -332,6 +289,8 @@ document.addEventListener("DOMContentLoaded", () => {
             this.header.textContent = this.day;
             this.maxTemp.textContent = Math.floor(this.dayData.temp.max);
             this.minTemp.textContent = Math.floor(this.dayData.temp.min);
+            this.img.src = `${this.imgContainer.getAttribute('data-icon-url')}${this.imgUrl}.png`;
+
         }
              
         getDay(timestamp) {  
@@ -349,8 +308,72 @@ document.addEventListener("DOMContentLoaded", () => {
             let day = isToday ? "Today" : daysOfWeek[date.getDay()];  // Use "Today" if it's today
             
             return day;
+        }    
+    }
+
+    function findImgUrl(description, sunrise, sunset) {
+        let isNight = false
+
+        if (sunrise && sunset) {
+            let date = Date.now();
+            isNight = sunrise * 1000 < date < sunset * 1000 ? false : true;
+        } 
+
+        const clearSky = ["clear sky"];
+        const partlyCloudy = ["few clouds", "scattered clouds"];
+        const fewClouds = ["broken clouds"];
+        const cloudy = ["overcast clouds"];
+        const lightRain = ["light rain", "moderate rain"];
+        const heavyRain = [
+            "heavy intensity rain", "very heavy rain", "extreme rain",
+            "light intensity shower rain", "shower rain", "heavy intensity shower rain", 
+            "ragged shower rain"
+        ];
+        const snowRain = [
+            "freezing rain", "sleet", "light shower sleet", 
+            "shower sleet", "light rain and snow", "rain and snow"
+        ];
+        const drizzle = [
+            "drizzle", "drizzle rain", "heavy intensity drizzle", 
+            "light intensity drizzle", "shower rain and drizzle", 
+            "heavy intensity drizzle rain", "shower drizzle"
+        ];
+        const thunderstormRain = [
+            "thunderstorm with light rain", "thunderstorm with rain", 
+            "thunderstorm with heavy rain", "thunderstorm with light drizzle", 
+            "thunderstorm with drizzle", "thunderstorm with heavy drizzle"
+        ];
+        const thunderstorm = ["thunderstorm", "heavy thunderstorm", "ragged thunderstorm"];
+        const snow = ["light snow", "snow", "light shower snow", "shower snow", "heavy shower snow"];
+        const heavySnow = ["heavy snow"];
+    
+        if (clearSky.includes(description)) {
+            return isNight ? "clear-night" : "sunny";
+        } else if (partlyCloudy.includes(description)) {
+            return isNight ? "partly-cloudy-night" : "partly-cloudy";
+        } else if (fewClouds.includes(description)) {
+            return "few-clouds";
+        } else if (cloudy.includes(description)) {
+            return "cloudy";
+        } else if (lightRain.includes(description)) {
+            return isNight ? "light-rain" : "sunny-light-rain";
+        } else if (heavyRain.includes(description)) {
+            return "heavy-rain";
+        } else if (snowRain.includes(description)) {
+            return "snow-rain";
+        } else if (drizzle.includes(description)) {
+            return "sunny-light-rain";
+        } else if (thunderstormRain.includes(description)) {
+            return "thunderstorm-rain";
+        } else if (thunderstorm.includes(description)) {
+            return "thunderstorm";
+        } else if (snow.includes(description)) {
+            return "snow";
+        } else if (heavySnow.includes(description)) {
+            return "heavy-snow";
+        } else {
+            return "Data not available.";
         }
-        
     }
     
     const unitSelection = document.querySelector("#unit-selection");
@@ -380,5 +403,116 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
             }
         });
+    });
+
+    const search = document.querySelector("#location-input");
+    const suggestions = document.querySelector("#location-suggestions");
+
+    // Debounce function to limit the number of API calls
+    function debounce(func, delay) {
+        let debounceTimer;
+        return function(...args) {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+
+    // Function to fetch city data from the Flask backend
+    async function fetchCityData(city) {
+        try {
+            const response = await fetch(`/search-city?city=${city}`);
+            if (!response.ok) {
+                throw new Error('City not found');
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to handle input change
+    async function handleInputChange() {
+        const city = search.value.trim();
+        if (city.length > 0) {
+            const cityData = await fetchCityData(city);
+            displaySuggestions(cityData);
+        } else {
+            suggestions.innerHTML = ''; // Clear suggestions if input is empty
+            suggestions.style.display = "none";
+        }
+    }
+
+    // Function to display city suggestions
+    function displaySuggestions(data) {
+        suggestions.innerHTML = ''; // Clear previous suggestions
+        suggestions.style.display = "block";
+        data.forEach(city => {
+            const suggestionItem = document.createElement('div');
+            suggestionItem.classList.add('suggestion-item');
+            const suggestionP = document.createElement('p');
+            suggestionP.textContent = `${city.name}, ${city.country}`;
+
+            suggestionP.onclick = () => {
+                search.value = `${city.name}, ${city.country}`;
+                suggestions.innerHTML = ''; // Clear suggestions after selecting a city
+                suggestions.style.display = "none";
+                updateWeatherData(city).then(()=>{
+                    units = document.querySelectorAll(".unit");
+                    units.forEach((unit) => {
+                        unit.setAttribute("data-after", "°C")
+                    });
+                    search.value = '';
+                });
+            };
+            suggestionItem.appendChild(suggestionP);
+            suggestions.appendChild(suggestionItem);
+        });
+    }
+
+    // Function to update weather data
+    async function updateWeatherData(cityData) {
+        try {
+            const weatherResponse = await fetch(`/weather-data?lat=${cityData.lat}&lon=${cityData.lon}`);
+            const weatherData = await weatherResponse.json();
+
+            const locationResponse = await fetch(`/city-data?lat=${cityData.lat}&lon=${cityData.lon}`);
+            const locationData = await locationResponse.json();
+
+            const airQualityResponse = await fetch(`/air-quality?lat=${cityData.lat}&lon=${cityData.lon}`);
+            const airQualityData = await airQualityResponse.json();
+
+            if (highlightsInstance) {
+                highlightsInstance.weatherData = weatherData;
+                highlightsInstance.locationData = locationData;
+                highlightsInstance.airQualityData = airQualityData;
+                highlightsInstance.updateData(); // Update the Highlights instance with new data
+            }
+
+        } catch (error) {
+            console.error('Error fetching new data:', error);
+            alert('Unable to retrieve new data.');
+        }
+    }
+
+    // Add event listener to the input field
+    search.addEventListener('input', debounce(handleInputChange, 300));
+    search.addEventListener('keydown', (event) => {
+        if (event.key == "Enter") {
+            event.preventDefault(); // Prevent form submission or other default actions
+            const city = search.value.trim();
+            if (city.length > 0) {
+                suggestions.innerHTML = ''; // Clear suggestions if input is empty
+                suggestions.style.display = "none";
+                updateWeatherData(fetchCityData(city)).then(()=>{
+                    units = document.querySelectorAll(".unit");
+                    units.forEach((unit) => {
+                        unit.setAttribute("data-after", "°C")
+                    });
+                    search.value = '';
+                }); // Fetch new data and update
+            }
+        }
     });
 });
